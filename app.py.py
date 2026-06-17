@@ -5,10 +5,10 @@ from PIL import Image
 import json
 
 # Page Configuration
-st.set_page_config(page_title="AI Fruit Classification", page_icon="🍎", layout="centered")
+st.set_page_config(page_title="AI Image Classification", page_icon="🔍", layout="centered")
 
-st.title("🍎 AI Fruit Classification App")
-st.write("Upload an image of a fruit, and the AI model will classify it using MobileNetV2 Transfer Learning.")
+st.title("🔍 AI Image Classification App")
+st.write("Upload an image, and the AI model will classify it using our custom-trained MobileNetV2 Transfer Learning model.")
 
 # Load the trained Keras model (Cached to load only once)
 @st.cache_resource
@@ -30,7 +30,7 @@ except Exception as e:
     st.stop()
 
 # Image Uploader Setup
-uploaded_file = st.file_uploader("Upload a fruit image (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload an image (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     # Display the uploaded image
@@ -38,8 +38,8 @@ if uploaded_file is not None:
     st.image(image, caption='Uploaded Image', use_column_width=True)
     
     with st.spinner("Classifying the image..."):
-        # Preprocess the image to match model input requirements
-        img = image.resize((224, 224))
+        # Preprocess the image to match new model input requirements (160x160)
+        img = image.resize((160, 160))
         img_array = tf.keras.preprocessing.image.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0) # Create a batch of 1
 
