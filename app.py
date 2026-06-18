@@ -1,4 +1,3 @@
-python
 import streamlit as st
 import tensorflow as tf
 import numpy as np
@@ -88,8 +87,9 @@ st.markdown("""
     }
     
     /* ─────────────────────────────────────────────────────────────────── */
-    /* FILE UPLOADER - CUSTOM STYLING TO LOOK LIKE A GLASS BOX */
+    /* FILE UPLOADER - CUSTOM STYLING (THE UNIFIED BOX) */
     /* ─────────────────────────────────────────────────────────────────── */
+    /* We style the native Streamlit Dropzone to be the beautiful Glass box */
     [data-testid="stFileUploadDropzone"] {
         background: rgba(20, 20, 40, 0.4) !important;
         backdrop-filter: blur(20px) !important;
@@ -106,9 +106,15 @@ st.markdown("""
         border: 2px solid rgba(0, 212, 255, 0.8) !important;
         box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
     }
-
+    
+    /* Make the text inside the uploader visible on dark background */
     [data-testid="stFileUploadDropzone"] div {
         color: #e8e8ff !important;
+    }
+    
+    /* Hide the default "Drag and drop file here" text since we added custom text above */
+    [data-testid="stFileUploadDropzone"] > div > span {
+        display: none !important;
     }
     
     /* ─────────────────────────────────────────────────────────────────── */
@@ -365,15 +371,15 @@ with st.chat_message("assistant", avatar="🤖"):
 st.divider()
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 7. UPLOAD SECTION WITH ENHANCED UX
+# 7. UPLOAD SECTION WITH ENHANCED UX (UNIFIED BOX)
 # ═══════════════════════════════════════════════════════════════════════════════
 st.markdown("""
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h3 style="color: #00d4ff; margin: 0 0 10px 0; font-size: 24px;">📸 Show Me Your Hand!</h3>
+    <div style="text-align: center; margin-bottom: -15px; position: relative; z-index: 10;">
+        <h3 style="color: #00d4ff; margin: 0 0 5px 0; font-size: 24px;">📸 Show Me Your Hand!</h3>
         <p style="color: #a0a0d0; font-size: 15px; margin: 5px 0;">
             Upload a <strong>clear photo</strong> of your hand showing:
         </p>
-        <p style="color: #808099; font-size: 15px; letter-spacing: 1px;">
+        <p style="color: #808099; font-size: 15px; letter-spacing: 1px; margin-bottom: 0;">
             ✊ <span style="color: #e8e8ff;">ROCK</span> &nbsp;&nbsp;|&nbsp;&nbsp; ✋ <span style="color: #e8e8ff;">PAPER</span> &nbsp;&nbsp;|&nbsp;&nbsp; ✌️ <span style="color: #e8e8ff;">SCISSORS</span>
         </p>
     </div>
@@ -468,8 +474,6 @@ st.markdown("""
             <span class="separator">|</span>
             <span class="developer-name">Ayesh Pramodya</span>
         </div>
-        <p class="powered-by"><strong>🚀 AI Referee v1.0</strong></p>
+        <p class="powered-by">Powered by <strong>ST Imagix</strong> | 🚀 AI Referee v2.0</p>
     </div>
 """, unsafe_allow_html=True)
-
-```
