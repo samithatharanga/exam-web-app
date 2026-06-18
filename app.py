@@ -89,7 +89,6 @@ st.markdown("""
     /* ─────────────────────────────────────────────────────────────────── */
     /* FILE UPLOADER - CUSTOM STYLING (THE UNIFIED BOX) */
     /* ─────────────────────────────────────────────────────────────────── */
-    /* We style the native Streamlit Dropzone to be the beautiful Glass box */
     [data-testid="stFileUploadDropzone"] {
         background: rgba(20, 20, 40, 0.4) !important;
         backdrop-filter: blur(20px) !important;
@@ -115,6 +114,14 @@ st.markdown("""
     /* Hide the default "Drag and drop file here" text since we added custom text above */
     [data-testid="stFileUploadDropzone"] > div > span {
         display: none !important;
+    }
+
+    /* Fix the ugly overlapping "uploadUpload" text on the button */
+    [data-testid="stFileUploadDropzone"] button div::after {
+        display: none !important;
+    }
+    [data-testid="stFileUploadDropzone"] button {
+        text-transform: capitalize !important;
     }
     
     /* ─────────────────────────────────────────────────────────────────── */
