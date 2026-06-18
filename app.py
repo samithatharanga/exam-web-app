@@ -7,7 +7,7 @@ import json
 # Page Configuration
 st.set_page_config(page_title="AI Image Classification", page_icon="🔍", layout="centered")
 
-st.title("🔍 AI Image Classification App")
+st.title("✂️🪨📄 Rock Paper Scissors AI Classifier")
 st.write("Upload an image, and the AI model will classify it using our custom-trained MobileNetV2 Transfer Learning model.")
 
 # Load the trained Keras model (Cached to load only once)
