@@ -305,18 +305,6 @@ st.markdown("""
         font-weight: 500;
     }
     
-    .footer-text a {
-        color: #00d4ff;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        font-weight: 600;
-    }
-    
-    .footer-text a:hover {
-        color: #7c3aed;
-        text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-    }
-    
     .developer-row {
         display: flex;
         justify-content: center;
@@ -354,4 +342,158 @@ st.markdown("""
         color: #00d4ff !important;
     }
     
-    /* ────────────────────────────────────────────────
+    /* ─────────────────────────────────────────────────────────────────── */
+    /* FILE UPLOADER - CUSTOM STYLING */
+    /* ─────────────────────────────────────────────────────────────────── */
+    .stFileUploader {
+        border-radius: 12px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 4. LOAD MODEL & CLASS NAMES (Cached - unchanged logic)
+# ═══════════════════════════════════════════════════════════════════════════════
+@st.cache_resource
+def load_model():
+    return tf.keras.models.load_model("student_mobilenetv2_transfer_learning.keras")
+
+@st.cache_data
+def load_class_names():
+    with open("class_names.json", "r") as f:
+        return json.load(f)
+
+try:
+    model = load_model()
+    class_names = load_class_names()
+except Exception as e:
+    st.error(f"⚠️ Error loading model files. Details: {e}")
+    st.stop()
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 5. MAIN TITLE WITH NEON GLOW EFFECT
+# ═══════════════════════════════════════════════════════════════════════════════
+st.markdown("<p class='main-title'>👋 AI Referee</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 16px; color: #a0a0d0; letter-spacing: 1px; margin-top: -20px;'>Rock • Paper • Scissors</p>", unsafe_allow_html=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 6. INTRODUCTION WITH CHATBOT VIBES
+# ═══════════════════════════════════════════════════════════════════════════════
+with st.chat_message("assistant", avatar="🤖"):
+    st.markdown("""
+    **Welcome to the future of hand gesture recognition!** 🚀
+    
+    I'm your AI Referee, powered by advanced computer vision. I analyze hand shapes in real-time to predict your move.
+    """)
+
+st.divider()
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 7. UPLOAD SECTION WITH ENHANCED UX
+# ═══════════════════════════════════════════════════════════════════════════════
+st.markdown("""
+    <div class="upload-container">
+        <div style="text-align: center;">
+            <h3 style="color: #00d4ff; margin: 0 0 10px 0; font-size: 20px;">📸 Show Me Your Hand!</h3>
+            <p style="color: #a0a0d0; font-size: 14px; margin: 5px 0;">
+                Upload a <strong>clear photo</strong> of your hand showing:
+            </p>
+            <p style="color: #808099; font-size: 13px; letter-spacing: 0.5px;">
+                ✊ <span style="color: #e8e8ff;">ROCK</span> &nbsp;&nbsp;|&nbsp;&nbsp; ✋ <span style="color: #e8e8ff;">PAPER</span> &nbsp;&nbsp;|&nbsp;&nbsp; ✌️ <span style="color: #e8e8ff;">SCISSORS</span>
+            </p>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 8. IMAGE UPLOADER (Functional, no style changes)
+# ═══════════════════════════════════════════════════════════════════════════════
+uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 9. PREDICTION LOGIC WITH DRAMATIC REVEALS
+# ═══════════════════════════════════════════════════════════════════════════════
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert('RGB')
+    
+    # USER CHAT MESSAGE - Show uploaded image
+    with st.chat_message("user", avatar="👤"):
+        st.write("**Here is my move!**")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(image, caption='Your Hand Photo', use_column_width=True)
+    
+    # AI CHAT MESSAGE - Dramatic reveal
+    with st.chat_message("assistant", avatar="🤖"):
+        # ─── LOADING STATE WITH DRAMATIC EFFECT ───
+        with st.spinner("🧠 Analyzing hand geometry..."):
+            time.sleep(0.5)  # Brief pause for drama
+            
+            # Preprocess: 160x160 (unchanged)
+            img = image.resize((160, 160))
+            img_array = tf.keras.preprocessing.image.img_to_array(img)
+            img_array = tf.expand_dims(img_array, 0)
+            
+            # Make Prediction (unchanged core logic)
+            predictions = model.predict(img_array)
+            predicted_class_idx = np.argmax(predictions[0])
+            predicted_class = class_names[predicted_class_idx]
+            confidence = np.max(predictions[0]) * 100
+        
+        # ─── EMOJI SELECTION ───
+        predicted_lower = predicted_class.lower()
+        if "rock" in predicted_lower:
+            emoji = "✊"
+        elif "paper" in predicted_lower:
+            emoji = "✋"
+        elif "scissor" in predicted_lower:
+            emoji = "✌️"
+        else:
+            emoji = "✨"
+        
+        # ─── DRAMATIC PREDICTION BOX ───
+        st.markdown(f"""
+        <div class="prediction-box">
+            <h4 style="margin-bottom: 10px;">AI PREDICTION</h4>
+            <h1>{emoji}</h1>
+            <h1>{predicted_class.upper()}</h1>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # ─── CONFIDENCE METER ───
+        st.markdown("<p style='text-align: center; color: #a0a0d0; font-size: 14px; margin-bottom: 10px;'><strong>Confidence Level</strong></p>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.progress(int(confidence))
+        st.markdown(f"<p style='text-align: center; color: #00d4ff; font-weight: bold; font-size: 16px;'>{confidence:.1f}%</p>", unsafe_allow_html=True)
+        
+        # ─── CONFIDENCE-BASED MESSAGES ───
+        st.markdown("<br>", unsafe_allow_html=True)
+        if confidence > 95:
+            st.success("🔥 **Crystal Clear!** I am absolutely certain about this prediction!")
+            st.balloons()  # 🎉 CONFETTI TRIGGER
+        elif confidence > 85:
+            st.success("😎 **Very Confident!** Your hand shape is textbook perfect!")
+        elif confidence > 70:
+            st.info("🤔 **Pretty Sure!** Your hand position is slightly ambiguous, but I've got this.")
+        elif confidence > 50:
+            st.warning("👀 **Making My Best Guess!** Try a clearer photo with better lighting.")
+        else:
+            st.warning("❓ **Help Me Out!** Your hand is too blurry or at an awkward angle. Please try again!")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 10. PREMIUM FOOTER WITH DEVELOPER CREDITS
+# ═══════════════════════════════════════════════════════════════════════════════
+st.markdown("""
+    <div class="footer-container">
+        <p class="footer-text">✨ Developed by ✨</p>
+        <div class="developer-row">
+            <span class="developer-name">Samitha Tharanga Wijesinghe</span>
+            <span class="separator">|</span>
+            <span class="developer-name">Shashen Fernando</span>
+            <span class="separator">|</span>
+            <span class="developer-name">Ayesh Pramodya</span>
+        </div>
+        <p class="powered-by">Powered by <strong>ST Imagix</strong> | 🚀 AI Referee v2.0</p>
+    </div>
+""", unsafe_allow_html=True)
