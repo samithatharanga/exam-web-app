@@ -5,10 +5,13 @@ from PIL import Image
 import json
 
 # Page Configuration
-st.set_page_config(page_title="AI Image Classification", page_icon="🔍", layout="centered")
+st.success("🤖 **Test Our AI Model!**")
+st.markdown("""
+Please upload an image of your **HAND** making one of the following shapes:
+> **✊ Rock &nbsp; | &nbsp; ✋ Paper &nbsp; | &nbsp; ✌️ Scissors**
 
-st.write("Upload an image of a hand gesture (✊ Rock, ✋ Paper, or ✌️ Scissors). The AI model will classify your hand shape using our custom-trained MobileNetV2 model.")
-st.write("Upload an image, and the AI model will classify it using our custom-trained MobileNetV2 Transfer Learning model.")
+*Powered by a custom-trained MobileNetV2 Transfer Learning model.*
+""")
 
 # Load the trained Keras model (Cached to load only once)
 @st.cache_resource
