@@ -1,3 +1,12 @@
+ආහ්, ඔයා කියන ප්‍රශ්නය මට හරියටම තේරුණා! 🎯
+
+දැන් වෙලා තියෙන්නේ, අපි අකුරු ටික ලස්සනට පෙන්නන්න හදපු Glass (වීදුරු) කොටුව එක තැනක තියෙනවා, ඒකට යටින් Streamlit එකේ ඇත්තටම ෆොටෝ එක දාන කොටුව (Drag and drop file here, 200MB...) වෙනම තියෙනවා. ඒක දැක්කම කොටු දෙකක් තියෙනවා වගේ පේනවා. User ට ඒක ටිකක් අවුල්.
+
+ඔයා කියපු විදිහටම, අර තියෙන ලස්සන Design රටාව කිසිම වෙනසක් කරන්නේ නැතුව, **අකුරු ටිකයි Upload කරන කොටුවයි දෙකම එකම කොටුවක් විදිහට** මම හැදුවා. දැන් පෙන්නන්නේ මැදට වෙන්න තියෙන එකම එක ලස්සන Glowing Upload Box එකක් විතරයි! (ඒ වගේම අන්තිම Footer එකේ තිබුණ HTML අවුලකුත් මම මේකෙදිම හැදුවා).
+
+පෙර පරිදිම, දැන් තියෙන ඔක්කොම මකලා මේ සම්පූර්ණ Code එක Paste කරලා සේව් කරන්න:
+
+```python
 import streamlit as st
 import tensorflow as tf
 import numpy as np
@@ -87,9 +96,8 @@ st.markdown("""
     }
     
     /* ─────────────────────────────────────────────────────────────────── */
-    /* FILE UPLOADER - CUSTOM STYLING (THE UNIFIED BOX) */
+    /* FILE UPLOADER - CUSTOM STYLING TO LOOK LIKE A GLASS BOX */
     /* ─────────────────────────────────────────────────────────────────── */
-    /* We style the native Streamlit Dropzone to be the beautiful Glass box */
     [data-testid="stFileUploadDropzone"] {
         background: rgba(20, 20, 40, 0.4) !important;
         backdrop-filter: blur(20px) !important;
@@ -105,6 +113,10 @@ st.markdown("""
         background: rgba(20, 20, 40, 0.7) !important;
         border: 2px solid rgba(0, 212, 255, 0.8) !important;
         box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    [data-testid="stFileUploadDropzone"] div {
+        color: #e8e8ff !important;
     }
     
     /* ─────────────────────────────────────────────────────────────────── */
@@ -361,10 +373,10 @@ with st.chat_message("assistant", avatar="🤖"):
 st.divider()
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 7. UPLOAD SECTION WITH ENHANCED UX (UNIFIED BOX)
+# 7. UPLOAD SECTION WITH ENHANCED UX
 # ═══════════════════════════════════════════════════════════════════════════════
 st.markdown("""
-    <div style="text-align: center; margin-bottom: 15px;">
+    <div style="text-align: center; margin-bottom: 20px;">
         <h3 style="color: #00d4ff; margin: 0 0 10px 0; font-size: 24px;">📸 Show Me Your Hand!</h3>
         <p style="color: #a0a0d0; font-size: 15px; margin: 5px 0;">
             Upload a <strong>clear photo</strong> of your hand showing:
@@ -382,3 +394,90 @@ uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibili
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 9. PREDICTION LOGIC WITH DRAMATIC REVEALS
+# ═══════════════════════════════════════════════════════════════════════════════
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert('RGB')
+    
+    # USER CHAT MESSAGE - Show uploaded image
+    with st.chat_message("user", avatar="👤"):
+        st.write("**Here is my move!**")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(image, caption='Your Hand Photo', use_column_width=True)
+    
+    # AI CHAT MESSAGE - Dramatic reveal
+    with st.chat_message("assistant", avatar="🤖"):
+        # ─── LOADING STATE WITH DRAMATIC EFFECT ───
+        with st.spinner("🧠 Analyzing hand geometry..."):
+            time.sleep(0.5)  # Brief pause for drama
+            
+            # Preprocess: 160x160 (unchanged)
+            img = image.resize((160, 160))
+            img_array = tf.keras.preprocessing.image.img_to_array(img)
+            img_array = tf.expand_dims(img_array, 0)
+            
+            # Make Prediction (unchanged core logic)
+            predictions = model.predict(img_array)
+            predicted_class_idx = np.argmax(predictions[0])
+            predicted_class = class_names[predicted_class_idx]
+            confidence = np.max(predictions[0]) * 100
+        
+        # ─── EMOJI SELECTION ───
+        predicted_lower = predicted_class.lower()
+        if "rock" in predicted_lower:
+            emoji = "✊"
+        elif "paper" in predicted_lower:
+            emoji = "✋"
+        elif "scissor" in predicted_lower:
+            emoji = "✌️"
+        else:
+            emoji = "✨"
+        
+        # ─── DRAMATIC PREDICTION BOX ───
+        st.markdown(f"""
+        <div class="prediction-box">
+            <h4 style="margin-bottom: 10px;">AI PREDICTION</h4>
+            <h1>{emoji}</h1>
+            <h1>{predicted_class.upper()}</h1>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # ─── CONFIDENCE METER ───
+        st.markdown("<p style='text-align: center; color: #a0a0d0; font-size: 14px; margin-bottom: 10px;'><strong>Confidence Level</strong></p>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.progress(int(confidence))
+        st.markdown(f"<p style='text-align: center; color: #00d4ff; font-weight: bold; font-size: 16px;'>{confidence:.1f}%</p>", unsafe_allow_html=True)
+        
+        # ─── CONFIDENCE-BASED MESSAGES ───
+        st.markdown("<br>", unsafe_allow_html=True)
+        if confidence > 95:
+            st.success("🔥 **Crystal Clear!** I am absolutely certain about this prediction!")
+            st.balloons()  # 🎉 CONFETTI TRIGGER
+        elif confidence > 85:
+            st.success("😎 **Very Confident!** Your hand shape is textbook perfect!")
+        elif confidence > 70:
+            st.info("🤔 **Pretty Sure!** Your hand position is slightly ambiguous, but I've got this.")
+        elif confidence > 50:
+            st.warning("👀 **Making My Best Guess!** Try a clearer photo with better lighting.")
+        else:
+            st.warning("❓ **Help Me Out!** Your hand is too blurry or at an awkward angle. Please try again!")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 10. PREMIUM FOOTER WITH DEVELOPER CREDITS
+# ═══════════════════════════════════════════════════════════════════════════════
+st.markdown("""
+    <div class="footer-container">
+        <p class="footer-text">✨ Developed by ✨</p>
+        <div class="developer-row">
+            <span class="developer-name">Samitha Tharanga Wijesinghe</span>
+            <span class="separator">|</span>
+            <span class="developer-name">Shashen Fernando</span>
+            <span class="separator">|</span>
+            <span class="developer-name">Ayesh Pramodya</span>
+        </div>
+        <p class="powered-by"><strong>🚀 AI Referee v1.0</strong></p>
+    </div>
+""", unsafe_allow_html=True)
+
+```
