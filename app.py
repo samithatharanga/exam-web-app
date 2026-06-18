@@ -111,17 +111,39 @@ st.markdown("""
         color: #e8e8ff !important;
     }
     
-    /* Hide the default "Drag and drop file here" text since we added custom text above */
+    /* Hide the default Streamlit texts completely to avoid bugs */
     [data-testid="stFileUploadDropzone"] > div > span {
         display: none !important;
     }
-
-    /* Fix the ugly overlapping "uploadUpload" text on the button */
-    [data-testid="stFileUploadDropzone"] button div::after {
+    [data-testid="stFileUploadDropzone"] section > div {
         display: none !important;
     }
+
+    /* THE ULTIMATE FIX FOR OVERLAPPING TEXT: Make original button text invisible, inject pure clean text */
     [data-testid="stFileUploadDropzone"] button {
-        text-transform: capitalize !important;
+        color: transparent !important;
+        position: relative !important;
+        background: rgba(124, 58, 237, 0.2) !important;
+        border: 1px solid rgba(0, 212, 255, 0.4) !important;
+        padding: 10px 24px !important;
+        border-radius: 10px !important;
+    }
+    
+    [data-testid="stFileUploadDropzone"] button::before {
+        content: "Upload Photo" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        color: #00d4ff !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+        white-space: nowrap !important;
+    }
+    
+    [data-testid="stFileUploadDropzone"] button:hover {
+        background: rgba(124, 58, 237, 0.4) !important;
+        border: 1px solid rgba(0, 212, 255, 0.8) !important;
     }
     
     /* ─────────────────────────────────────────────────────────────────── */
