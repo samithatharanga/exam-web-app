@@ -336,6 +336,6 @@ st.markdown("""
             <span class="separator">|</span>
             <span class="developer-name">Ayesh Pramodya</span>
         </div>
-        <p class="powered-by">Powered by <strong>ST Imagix</strong> | 🚀 AI Referee v2.0</p>
+        <p class="powered-by">Powered by <strong>🚀 AI Referee</strong> |v1.0</p>
     </div>
 """, unsafe_allow_html=True)
